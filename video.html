@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        .contain {
+            width: 640px;
+            height: 360px;
+            margin: 100px auto;
+            position: relative;
+        }
+        
+        video {
+            width: 640px;
+            height: 360px;
+        }
+        
+        .bar {
+            width: 600px;
+            height: 30px;
+            background: rgba(0, 0, 0, .5);
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+        }
+        
+        .fa {
+            position: absolute;
+            font-size: 20px;
+            color: #fff;
+        }
+        
+        .controls {
+            left: 10px;
+            top: 6px;
+        }
+        
+        .full {
+            position: absolute;
+            right: 10px;
+            top: 6px;
+        }
+        
+        .img {
+            position: absolute;
+            width: 380px;
+            height: 20px;
+            left: 35px;
+            top: 5px;
+            background: #555;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .inner {
+            /* width: 100px; */
+            height: 100%;
+            background: #fff;
+        }
+        
+        .time {
+            position: absolute;
+            right: 35px;
+            top: 4px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contain">
+        <video src="./video/chrome.mp4" poster="./images/poster.jpg"></video>
+        <div class="bar">
+            <i class="fa fa-play controls"></i>
+            <!-- <i class="fa fa-pause"></i> -->
+            <div class="img">
+                <div class="inner"></div>
+            </div>
+            <div class="time">
+                <span class="now">00:00:00</span>/<span class="total">00:00:00</span>
+            </div>
+            <i class="fa fa-arrows-alt full"></i>
+        </div>
+    </div>
+    <script>
+        var controls = document.querySelector('.controls');
+        var video = document.querySelector('video');
+        var total = document.querySelector('.total');
+        var now = document.querySelector('.now');
+        var inner = document.querySelector('.inner');
+        var full = document.querySelector('.full');
+        var img = document.querySelector('.img');
+        var totalTime = 0;
+        controls.onclick = function() {
+            if (video.paused) {
+                video.play();
+                this.classList.add('fa-pause');
+            } else {
+                video.pause();
+                this.classList.remove('fa-pause');
+            }
+        }
+        video.oncanplay = function() {
+            totalTime = this.duration;
+            // alert(getTime(totalTime));
+            total.innerHTML = getTime(totalTime);
+        }
+
+        video.ontimeupdate = function() {
+            var num = this.currentTime;
+            now.innerHTML = getTime(num);
+            inner.style.width = num / totalTime * img.offsetWidth + 'px';
+        }
+        full.onclick = function() {
+            if (document.webkitFullscreenElement) {
+                document.webkitCancelFullScreen();
+            } else {
+                video.webkitRequestFullScreen();
+            }
+        }
+
+        img.onclick = function(e) {
+            var len = e.offsetX;
+            video.currentTime = len / img.offsetWidth * totalTime;
+        }
+
+        function getTime(t) {
+            var hours = Math.floor(t % 86400 / 3600);
+            var minutes = Math.floor(t % 86400 % 3600 / 60);
+            var seconds = Math.floor(t % 60);
+
+            function get(num) {
+                if (num < 10) {
+                    return '0' + num;
+                } else {
+                    return num;
+                }
+            }
+            return get(hours) + ':' + get(minutes) + ':' + get(seconds);
+        }
+    </script>
+</body>
+
+</html>
